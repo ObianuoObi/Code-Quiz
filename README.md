@@ -6,7 +6,7 @@
    _ A timed coding quiz with multiple-choice questions._
 
 ## Deployment
-[Live](https://obianuoobi.github.io/code-refactor/)
+[Live]()
 
 ### Author
 Obinna Obianuo
