@@ -11,33 +11,30 @@ let submitButton = document.querySelector('#submit');
 let feedbackDiv = document.querySelector('#feedback');
 let highscoresList = document.querySelector('#highscores');
 let clearButton = document.querySelector('#clear');
+let optionButton = document.querySelectorAll('.btn-options');
+
 let timerContainer = document.querySelector('#timer')
 
-let currentQuestion = 0;
+let currentQuestion = -1;
 let score = 0;
 let time = 0;
 let timerId;
-
+//Evt List
+optionButton.forEach(btn => btn.addEventListener("click",checkAnswer))
 // function to populate questions
 
 function populateQuestions(questions) {
-  console.log(questions)
-  let question = questions.title;
-  let choices = questions.choices;
-  let answer = questions.answer;
-
-  // set the text of the html
-  choicesContainer.innerHTML = '';
-  questionTitle.textContent = question;
+  console.log(questions,"Populate")
+  
+  questionTitle.innerText= questions.title;
   console.log(questionTitle)
   // create list content in array 
-  let choicesList = document.createElement('ul');
-  for (let i = 0; i < choices.length; i++) {
-    let choice = document.createElement('li');
-    choice.textContent = choices[i];
-    choicesList.appendChild(choice);
+  for (let i = 0; i < questions.choices.length; i++) {
+    optionButton[i].innerText = questions.choices[i];
+    console.log(optionButton[i])
+   ;
   }
-  choicesContainer.appendChild(choicesList);
+
 
 }
 
@@ -45,79 +42,26 @@ function populateQuestions(questions) {
 
 // } 
 function nextQuestion() {
-  currentQuestion++;
-  populateQuestions(questions[currentQuestion]);
+
+  if(currentQuestion<questions.length-1){
+
+     console.log(currentQuestion)
+    currentQuestion++;
+    populateQuestions(questions[currentQuestion]);
+  }else{
+    endQuiz()
+  }
 
 }
 
 // // start the quiz
 
 function startQuiz() {
-    // Start the timer
-        time = questions.length * 15;
-        timerId = setInterval(updateTime, 1000);
-
-        // Display the first question
-        displayQuestion();
-      }
-
-//     // Function to update the time
-//       function updateTime() {
-//         time--;
-//         document.getElementById("time").innerHTML = time;
-//         if (time <= 0) {
-//           endQuiz();
-//         }
-//       }
-// let counter; 
-// startButton.addEventListener('click', function() {
-//     // set attribute to make questions visible and invisible
-//     startScreenElement.setAttribute('class', 'hide');
-//     questionContainer.setAttribute('class', 'visible');
-
-//     questions.forEach(function(question) {
-//         populateQuestions(question);
-//     })
-
-//     // show the first question
-//     currentQuestion = 0;
-//     populateQuestions(questions[currentQuestion]);
-
-
-
-//     let counter = 100;
-//     let timer = setInterval(function() {
-//         counter--;
-//         timerContainer = counter;
-//         if (counter <= 0) {
-//             endGame()
-//             clearInterval(timer);
-//         }
-
-//     }, 1000);
-// });
-
-// choices.addEventListener('click', function(){
-
-
-
-// });
-
-
-
-
-
-
-
-
-
-function startQuiz() {
   // Start the timer
   time = questions.length * 15;
   timerId = setInterval(updateTime, 1000);
-
-  // Display the first question
-  displayQuestion();
+//
+  nextQuestion()
 }
 
 // Function to update the time
@@ -129,54 +73,33 @@ function updateTime() {
   }
 }
 
-// Function to display the current question
-function displayQuestion() {
-  // Update the question title
-  document.getElementById("question-title").innerHTML = questions[currentQuestion].question;
-
-  // Clear the previous choices
-  document.getElementById("choices").innerHTML = "";
-
-  // Display the choices for the current question
-  for (let i = 0; i < questions[currentQuestion].choices.length; i++) {
-    let choice = document.createElement("button");
-    choice.innerHTML = questions[currentQuestion].choices[i];
-    choice.onclick = checkAnswer;
-    document.getElementById("choices").appendChild(choice);
-  }
-  populateQuestions(questions[currentQuestion])
-}
-
 // Function to check if the answer is correct
 function checkAnswer() {
-  if (this.innerHTML === questions[currentQuestion].correctAnswer) {
-    score++;
-    document.getElementById("feedback").innerHTML = "Correct!";
+  console.log(this.textContent,"Check Answer",questions[currentQuestion].correctAnswer);
+  if (this.innerText == questions[currentQuestion].correctAnswer) {
+    score++
+    document.getElementById("feedback").innerText = "Correct!";
   } else {
     time -= 10;
-    document.getElementById("feedback").innerHTML = "Incorrect!";
+    document.getElementById("feedback").innerText = "Incorrect!";
   }
   document.getElementById("feedback").classList.remove("hide");
-  currentQuestion++;
-  if (currentQuestion === questions.length) {
-    endQuiz();
-  } else {
-    setTimeout(displayQuestion, 1000);
-  }
+  nextQuestion()
 }
 
 // Function to end the quiz
 function endQuiz() {
   clearInterval(timerId);
+  document.getElementById("questions").classList.add("hide");
   document.getElementById("end-screen").classList.remove("hide");
-  document.getElementById("final-score").innerHTML = score;
+  document.getElementById("final-score").innerText = score;
 }
 
 // Add event listener to start button
 document.getElementById("start").addEventListener("click", function () {
-  startQuiz();
   document.getElementById("start-screen").classList.add("hide");
   document.getElementById("questions").classList.remove("hide");
+  startQuiz();
 });
 
 document.getElementById("submit").addEventListener("click", function () {
